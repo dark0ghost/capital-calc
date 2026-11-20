@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Капитал → доход · калькулятор денежного рынка</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="Сколько нужно капитала, чтобы получать нужный доход в месяц или в год под ставку денежного рынка / репо.">
+
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#0b1220">
+</head>
+
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <svg class="hero-chart" viewBox="0 0 300 80" aria-hidden="true">
+        <polyline points="0,70 30,62 60,64 90,50 120,52 150,38 180,40 210,26 240,28 270,14 300,8" />
+      </svg>
+      <p class="eyebrow">Денежный рынок · репо · вклады</p>
+      <h1>Сколько нужно капитала,<br>чтобы жить на&nbsp;проценты</h1>
+      <p class="lead">Заполните любые два блока — третий рассчитается сам. Подсвеченное поле посчитано.</p>
+    </header>
+
+    <section class="card" aria-label="Калькулятор">
+      <div class="toolbar">
+        <label>Инструмент
+          <select id="kind">
+            <option value="fund">Фонд денежного рынка</option>
+            <option value="deposit">Вклад / накопительный счёт</option>
+          </select>
+        </label>
+        <label>Валюта
+          <select id="currency">
+            <option value="RUB">₽ RUB</option>
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+            <option value="CNY">¥ CNY</option>
+          </select>
+        </label>
+        <label id="feeBox">Комиссия фонда, % год.
+          <input id="fee" type="text" inputmode="decimal" value="0,3">
+        </label>
+        <label id="keyBox" hidden title="1 000 000 ₽ × эта ставка — сумма процентов без НДФЛ">Макс. ключевая ставка, %
+          <input id="keyRate" type="text" inputmode="decimal" value="21">
+        </label>
+        <label>НДФЛ
+          <select id="tax">
+            <option value="0">Без налога</option>
+            <option value="13" selected>13%</option>
+            <option value="15">15%</option>
+            <option value="18">18%</option>
+            <option value="20">20%</option>
+            <option value="22">22%</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid">
+        <fieldset class="block" data-group="capital">
+          <legend>Капитал</legend>
+          <label class="field">
+            <span>Сумма</span>
+            <span class="input"><input id="capital" type="text" inputmode="decimal" autocomplete="off"><i class="cur"></i></span>
+          </label>
+        </fieldset>
+
+        <fieldset class="block" data-group="rate">
+          <legend>Ставка</legend>
+          <label class="field">
+            <span>В год</span>
+            <span class="input"><input id="rateY" type="text" inputmode="decimal" autocomplete="off"><i>%</i></span>
+          </label>
+          <label class="field">
+            <span>В месяц</span>
+            <span class="input"><input id="rateM" type="text" inputmode="decimal" autocomplete="off"><i>%</i></span>
+          </label>
+        </fieldset>
+
+        <fieldset class="block" data-group="income">
+          <legend>Доход после налога</legend>
+          <label class="field">
+            <span>В месяц</span>
+            <span class="input"><input id="incM" type="text" inputmode="decimal" autocomplete="off"><i class="cur"></i></span>
+          </label>
+          <label class="field">
+            <span>В год</span>
+            <span class="input"><input id="incY" type="text" inputmode="decimal" autocomplete="off"><i class="cur"></i></span>
+          </label>
+        </fieldset>
+      </div>
+
+      <dl class="stats">
+        <div><dt>Чистая доходность</dt><dd id="sNet">—</dd></div>
+        <div><dt>НДФЛ за год</dt><dd id="sTax">—</dd></div>
+        <div><dt>Комиссия за год</dt><dd id="sFee">—</dd></div>
+        <div><dt>Через год при реинвесте, до налога</dt><dd id="sReinv">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="card notes">
+      <h2>Как считается</h2>
+      <ul>
+        <li><b>Фонды денежного рынка</b> (LQDT, AKMM, SBMM и др.) кладут деньги в репо с ЦК на один день под ставку ≈ RUSFAR — она держится около ключевой ставки ЦБ. Валютные фонды — под ставку валютного репо.</li>
+        <li>Проценты начисляются <b>каждый календарный день</b> и реинвестируются в цену пая: ставка за месяц = (1 + r/365)<sup>365/12</sup> − 1.</li>
+        <li><b>Доход в месяц</b> — сумма паёв, которую можно продавать каждый месяц, не уменьшая капитал. Доход в год = 12 × месячный.</li>
+        <li><b>Вклад / накопительный счёт</b>: проценты ставка/12 в месяц, при реинвесте — ежемесячная капитализация. Без НДФЛ — проценты в пределах 1 000 000 ₽ × максимальная ключевая ставка (поле «Макс. ключевая ставка»), налог только с суммы сверх. Льгота считается в ₽ и в расчёте применяется только к рублёвым вкладам.</li>
+        <li>Комиссия фонда вычитается из ставки. НДФЛ — по выбранной ставке (13–22% в зависимости от суммы годового дохода), считается плоско со всего дохода. ЛДВ, ИИС и переоценка валюты не учтены.</li>
+        <li>Ставка плавающая: снизит ЦБ ключевую — упадёт и доход. Укажите актуальную ставку. Расчёт примерный и не является инвестиционной рекомендацией.</li>
+      </ul>
+    </section>
+  </main>
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
